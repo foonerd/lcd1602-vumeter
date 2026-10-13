@@ -8,7 +8,7 @@ The workspace version is **0.1.0**.
 
 ## Get it
 
-Download the plugin zip from the [releases](https://github.com/foonerd/lcd1602-vumeter/releases) and install it through Volumio's plugin manager (Plugins, Upload). The [wiki](https://github.com/foonerd/lcd1602-vumeter/wiki) has the [wiring](https://github.com/foonerd/lcd1602-vumeter/wiki/Wiring), the [supported displays](https://github.com/foonerd/lcd1602-vumeter/wiki/Displays), every [setting](https://github.com/foonerd/lcd1602-vumeter/wiki/Settings) and the [troubleshooting](https://github.com/foonerd/lcd1602-vumeter/wiki/Troubleshooting) page.
+Download the plugin zip from the [releases](https://github.com/foonerd/lcd1602-vumeter/releases) and install it by hand as the [Quick Start](https://github.com/foonerd/lcd1602-vumeter/wiki/Quick-Start) shows: `miniunzip` into a folder on the player, `volumio plugin install` from it. Once it has been through field testing and Volumio's review it will be in the plugin store. The [wiki](https://github.com/foonerd/lcd1602-vumeter/wiki) has the [wiring](https://github.com/foonerd/lcd1602-vumeter/wiki/Wiring), the [supported displays](https://github.com/foonerd/lcd1602-vumeter/wiki/Displays), every [setting](https://github.com/foonerd/lcd1602-vumeter/wiki/Settings) and the [troubleshooting](https://github.com/foonerd/lcd1602-vumeter/wiki/Troubleshooting) page.
 
 | Player | Volumio 4 on a Raspberry Pi 3, 4, 5 or Zero 2 W (32- or 64-bit image), or a PC with a USB I2C adapter. |
 | --- | --- |
