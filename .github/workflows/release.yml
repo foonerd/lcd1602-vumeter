@@ -42,9 +42,12 @@ jobs:
           scripts/release-notes.sh "${GITHUB_REF_NAME#v}" > dist/notes.md
           printf '\n' >> dist/notes.md
           cat .github/release-footer.md >> dist/notes.md
+      # Published as a pre-release until it has been tried on a player; made
+      # the latest by hand (gh release edit <tag> --prerelease=false --latest).
       - name: Release
         uses: softprops/action-gh-release@v3
         with:
+          prerelease: true
           body_path: dist/notes.md
           files: |
             dist/*.zip
