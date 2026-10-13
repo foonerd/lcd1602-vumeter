@@ -11,32 +11,29 @@ jobs:
   check:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Toolchains
         run: |
           sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu libc6-dev-armhf-cross libc6-dev-arm64-cross \
             libasound2-dev shellcheck
-          rustup show active-toolchain || rustup toolchain install
-      - uses: actions/setup-node@v4
+          rustup toolchain install && rustup show active-toolchain
+      - uses: actions/setup-node@v7
         with:
           node-version: 20
-      - name: Cache cargo
-        uses: actions/cache@v4
+      - uses: Swatinem/rust-cache@v2
         with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: cargo-${{ runner.os }}-${{ hashFiles('Cargo.lock', 'rust-toolchain.toml') }}
+          shared-key: ci
+          cache-bin: false
+          save-if: ${{ github.ref == 'refs/heads/main' }}
       - name: Check
         run: scripts/check.sh
       - name: Ship
         run: scripts/ship.sh
       - name: Package
         run: scripts/package.sh
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: plugin
           path: dist/*.zip

@@ -14,17 +14,22 @@ jobs:
   release:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Toolchains
         run: |
           sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu libc6-dev-armhf-cross libc6-dev-arm64-cross \
             libasound2-dev shellcheck
-          rustup show active-toolchain || rustup toolchain install
-      - uses: actions/setup-node@v4
+          rustup toolchain install && rustup show active-toolchain
+      - uses: actions/setup-node@v7
         with:
           node-version: 20
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: ci
+          cache-bin: false
+          save-if: false
       - name: Check, ship, package
         run: |
           scripts/check.sh
@@ -38,7 +43,7 @@ jobs:
           printf '\n' >> dist/notes.md
           cat .github/release-footer.md >> dist/notes.md
       - name: Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           body_path: dist/notes.md
           files: |
