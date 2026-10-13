@@ -1,0 +1,23 @@
+[package]
+name = "vutap-alsa"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "The audio tap: an ALSA PCM plugin that passes the stream through and measures it for the display"
+build = "build.rs"
+
+[lib]
+name = "vutap"
+crate-type = ["cdylib"]
+path = "src/lib.rs"
+# The shared object is named after the ALSA type; the crate of that name
+# documents the ring, so this one stays out of the documentation.
+doc = false
+
+[dependencies]
+vutap = { path = "../../crates/vutap" }
+libc = "0.2"
+
+[lints]
+workspace = true

@@ -1,0 +1,3 @@
+# The build reads only the toolchain file from the context.
+*
+!rust-toolchain.toml

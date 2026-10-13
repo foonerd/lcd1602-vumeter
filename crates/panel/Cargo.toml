@@ -1,0 +1,13 @@
+[package]
+name = "panel"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "A 16x2 character LCD over I2C: the controllers, the backpacks, the RGB backlights and the bar glyphs"
+
+[dependencies]
+libc = "0.2"
+
+[lints]
+workspace = true

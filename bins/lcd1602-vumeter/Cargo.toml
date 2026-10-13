@@ -1,0 +1,16 @@
+[package]
+name = "lcd1602-vumeter"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "The display daemon: reads the tap's ring and the player's state, draws VU bars and messages on a 16x2 LCD"
+
+[dependencies]
+panel = { path = "../../crates/panel" }
+vutap = { path = "../../crates/vutap" }
+libc = "0.2"
+serde_json = "1"
+
+[lints]
+workspace = true

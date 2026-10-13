@@ -1,0 +1,13 @@
+[package]
+name = "vutap"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "What the audio tap measures, peak and RMS per channel, and the ring it shares them through"
+
+[dependencies]
+libc = "0.2"
+
+[lints]
+workspace = true

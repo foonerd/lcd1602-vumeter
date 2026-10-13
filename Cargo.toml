@@ -1,0 +1,28 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/vutap",
+    "crates/panel",
+    "bins/vutap-alsa",
+    "bins/lcd1602-vumeter",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+publish = false
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = false
+panic = "unwind"
+
+# One set of lints for every crate; CI denies warnings.
+[workspace.lints.rust]
+unused_qualifications = "warn"
+
+[workspace.lints.clippy]
+type_complexity = "allow"
+too_many_arguments = "allow"

@@ -1,0 +1,40 @@
+# The release on a tag vX.Y.Z: the check, the binaries for every
+# architecture, the plugin zip and its digest, published as a GitHub
+# release.
+name: release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Toolchains
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu libc6-dev-armhf-cross libc6-dev-arm64-cross \
+            libasound2-dev shellcheck
+          rustup show active-toolchain || rustup toolchain install
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check, ship, package
+        run: |
+          scripts/check.sh
+          scripts/ship.sh
+          scripts/package.sh
+          ( cd dist && sha256sum ./*.zip > SHA256SUMS )
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.zip
+            dist/SHA256SUMS
+          generate_release_notes: true
