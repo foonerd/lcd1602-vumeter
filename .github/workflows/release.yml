@@ -31,10 +31,16 @@ jobs:
           scripts/ship.sh
           scripts/package.sh
           ( cd dist && sha256sum ./*.zip > SHA256SUMS )
+      # The notes: the version's changelog section, then the sponsorship footer.
+      - name: Release notes
+        run: |
+          scripts/release-notes.sh "${GITHUB_REF_NAME#v}" > dist/notes.md
+          printf '\n' >> dist/notes.md
+          cat .github/release-footer.md >> dist/notes.md
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
+          body_path: dist/notes.md
           files: |
             dist/*.zip
             dist/SHA256SUMS
-          generate_release_notes: true
