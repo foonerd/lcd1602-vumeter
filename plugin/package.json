@@ -3,7 +3,7 @@
     "version": "0.1.2",
     "description": "Stereo VU bars, the player's state and a standby clock on a 16x2 character LCD over I2C",
     "main": "index.js",
-    "author": "foonerd",
+    "author": "Just a Nerd",
     "license": "MIT",
     "repository": "https://github.com/foonerd/lcd1602-vumeter",
     "volumio_info": {
