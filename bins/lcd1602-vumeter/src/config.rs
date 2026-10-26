@@ -76,6 +76,8 @@ pub struct Settings {
     pub clock_format: String,
     pub date_format: String,
     pub backlight_idle_off_s: u32,
+    /// Seconds a pause lasts before it counts as a stop; `None` never.
+    pub pause_standby_s: Option<u32>,
     pub rgb_mode: RgbMode,
     pub rgb_play: (u8, u8, u8),
     pub rgb_pause: (u8, u8, u8),
@@ -112,6 +114,7 @@ impl Default for Settings {
             clock_format: "%H:%M".into(),
             date_format: "%a %d %b".into(),
             backlight_idle_off_s: 0,
+            pause_standby_s: Some(0),
             rgb_mode: RgbMode::Fixed,
             rgb_play: (255, 255, 255),
             rgb_pause: (255, 160, 0),
@@ -295,6 +298,11 @@ impl Settings {
             clock_format: text("clock_format", &d.clock_format),
             date_format: text("date_format", &d.date_format),
             backlight_idle_off_s: num("backlight_idle_off_s", 0.0, 86400.0, 0.0) as u32,
+            pause_standby_s: if s.boolean("pause_standby").unwrap_or(true) {
+                Some(num("pause_timeout", 0.0, 3600.0, 0.0) as u32)
+            } else {
+                None
+            },
             rgb_mode: match s.string("rgb_mode").as_deref() {
                 Some("level") => RgbMode::Level,
                 Some("off") => RgbMode::Off,
@@ -351,6 +359,7 @@ mod tests {
             "rgb_play": { "type": "string", "value": "#FF0080" },
             "rgb_mode": { "type": "string", "value": "level" },
             "text_pause": { "type": "string", "value": "Pause|" },
+            "pause_timeout": { "type": "number", "value": 45 },
             "fps": 12
         });
         let s = Settings::from_store(json);
@@ -368,6 +377,7 @@ mod tests {
         assert_eq!(s.rgb_play, (255, 0, 128));
         assert_eq!(s.rgb_mode, RgbMode::Level);
         assert_eq!(s.text_pause, ["Pause".to_string(), String::new()]);
+        assert_eq!(s.pause_standby_s, Some(45));
         assert_eq!(s.fps, 12, "a bare value without the type wrapper");
         assert_eq!(
             s.text_boot,
@@ -378,6 +388,17 @@ mod tests {
             s.spec().is_some(),
             "controller, address and RGB named: a full spec"
         );
+    }
+
+    #[test]
+    fn a_pause_is_a_stop_at_once_unless_switched_off() {
+        assert_eq!(Settings::default().pause_standby_s, Some(0));
+        let off = Settings::from_store(
+            json!({ "pause_standby": { "value": false }, "pause_timeout": { "value": 30 } }),
+        );
+        assert_eq!(off.pause_standby_s, None);
+        let wild = Settings::from_store(json!({ "pause_timeout": { "value": 99999 } }));
+        assert_eq!(wild.pause_standby_s, Some(3600), "held to an hour");
     }
 
     #[test]

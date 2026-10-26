@@ -587,19 +587,29 @@ impl Daemon {
             return;
         };
         let s = &self.settings;
-        let playing_blind = self.status == Status::Play
-            && !ring_live
-            && now.duration_since(self.status_since) > NO_TAP_PATIENCE;
+        let since = now.duration_since(self.status_since);
+        // A pause this long is a stop: Volumio's play button pauses rather
+        // than stops, so a paused player is the usual resting state.
+        let status = match self.status {
+            Status::Pause
+                if s.pause_standby_s
+                    .is_some_and(|t| since.as_secs() >= t as u64) =>
+            {
+                Status::Stop
+            }
+            other => other,
+        };
+        let playing_blind = status == Status::Play && !ring_live && since > NO_TAP_PATIENCE;
         // Everything but the standby screen draws with the bars' glyphs.
         let drawn: std::io::Result<()> = match &self.phase {
             Phase::Boot if !s.show_lifecycle => screen::idle(panel, s, Clock::Now),
-            Phase::Player if self.status == Status::Stop => screen::idle(panel, s, Clock::Now),
+            Phase::Player if status == Status::Stop => screen::idle(panel, s, Clock::Now),
             other => panel.set_bank(Bank::Bars(s.style)).map(|_| match other {
                 Phase::Boot => screen::lines(panel, &s.text_boot),
                 Phase::Ready { .. } => screen::lines(panel, &s.text_ready),
                 Phase::Message { lines, .. } => screen::lines(panel, lines),
                 Phase::Farewell => {}
-                Phase::Player => match self.status {
+                Phase::Player => match status {
                     Status::Play if playing_blind => {
                         screen::lines(panel, &["Playing".into(), "no audio tap".into()])
                     }
@@ -614,15 +624,14 @@ impl Daemon {
             self.lost_panel(e);
             return;
         }
-        let idle_dark = self.status == Status::Stop
+        let idle_dark = status == Status::Stop
             && self.phase == Phase::Player
             && s.backlight_idle_off_s > 0
-            && now.duration_since(self.status_since)
-                > Duration::from_secs(s.backlight_idle_off_s as u64);
+            && since > Duration::from_secs(s.backlight_idle_off_s as u64);
         let color = if idle_dark || s.rgb_mode == RgbMode::Off {
             (0, 0, 0)
         } else {
-            let base = match (&self.phase, self.status) {
+            let base = match (&self.phase, status) {
                 (Phase::Player, Status::Play) if s.rgb_mode == RgbMode::Level => {
                     level_color(self.meter.loudness())
                 }
@@ -880,6 +889,8 @@ mod tests {
         std::fs::create_dir_all(&dir).unwrap();
         let settings = Settings {
             idle_rows: [IdleRow::Text, IdleRow::Clock],
+            // The pause text for half a minute, then standby.
+            pause_standby_s: Some(30),
             ..Settings::default()
         };
         let mut d = Daemon::new(settings, dir.join("config.json"), dir.clone());
@@ -901,6 +912,14 @@ mod tests {
         d.apply(Command::State(Status::Pause), t0);
         d.draw(t0);
         assert_eq!(memory.borrow().text(0, 16), "#    Paused     ");
+        d.draw(t0 + Duration::from_secs(29));
+        assert_eq!(memory.borrow().text(0, 16), "#    Paused     ");
+        d.draw(t0 + Duration::from_secs(30));
+        assert_eq!(
+            memory.borrow().text(0, 16),
+            "    Volumio     ",
+            "a pause this old is a stop: standby"
+        );
         d.apply(Command::State(Status::Play), t0);
         d.draw(t0);
         assert_eq!(
