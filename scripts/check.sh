@@ -110,6 +110,36 @@ if (missing.length) { console.error('strings missing: ' + missing.join(', ')); p
 console.log('every UI string is defined');
 JS
 
+echo "check: languages"
+# A language file is all or nothing: Volumio takes the plugin's block for its
+# toasts and modals from the one file of the player's language, with no fall
+# back to the English file, so a missing key would show as its name. Each
+# file must carry every English key, with the {{placeholders}} and the |
+# row separator the English has.
+with_node - plugin/i18n/strings_en.json plugin/i18n/strings_*.json <<'JS'
+const fs = require('fs');
+const [enFile, ...files] = process.argv.slice(2);
+const en = JSON.parse(fs.readFileSync(enFile, 'utf8'));
+const [block] = Object.keys(en);
+let bad = 0;
+for (const file of files.filter((f) => f !== enFile)) {
+  const lang = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const problems = [];
+  if (Object.keys(lang).join() !== block) problems.push('must have the one block ' + block);
+  const strings = lang[block] || {};
+  for (const [key, text] of Object.entries(en[block])) {
+    const t = strings[key];
+    if (typeof t !== 'string' || !t.trim()) { problems.push(key + ' missing'); continue; }
+    for (const p of text.match(/\{\{[a-z]+\}\}/g) || []) if (!t.includes(p)) problems.push(key + ' lacks ' + p);
+    if (text.includes('|') && !t.includes('|')) problems.push(key + ' lacks the | separator');
+  }
+  for (const key of Object.keys(strings)) if (!(key in en[block])) problems.push(key + ' is not an English key');
+  if (problems.length) { bad++; console.error(file + ':\n  ' + problems.join('\n  ')); }
+}
+if (bad) process.exit(1);
+console.log((files.length - 1) + ' language files complete');
+JS
+
 echo "check: plugin"
 with_node --check plugin/index.js plugin/lib/boot.js
 with_node --test plugin/test/
