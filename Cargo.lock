@@ -10,7 +10,7 @@ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
 
 [[package]]
 name = "lcd1602-vumeter"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "libc",
  "panel",
@@ -32,7 +32,7 @@ checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 
 [[package]]
 name = "panel"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "libc",
 ]
@@ -116,14 +116,14 @@ checksum = "a2c754d6c33795a1c324727428e5a7dedb5b06195f9890bdbcba760d3e246563"
 
 [[package]]
 name = "vutap"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "libc",
 ]
 
 [[package]]
 name = "vutap-alsa"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "libc",
  "vutap",

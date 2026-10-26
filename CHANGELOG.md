@@ -2,6 +2,10 @@
 
 All notable changes to the LCD1602 VU Meter are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.3] - 2026-10-26
+
+- The plugin's author is Just a Nerd in the store listing, as in the other plugins; the GitHub login stood there before.
+
 ## [0.1.2] - 2026-10-26
 
 - The settings page in German, French, Italian, Dutch, Spanish, Polish, Japanese and Chinese, following the player's language; any other language shows English. A language file is all or nothing, since Volumio takes the plugin's toasts and modals from the one file of the player's language without falling back to the English one; the check refuses a file that lacks a key, a placeholder or the `|` separator.
