@@ -4,7 +4,7 @@ Two VU bars on a 16x2 character LCD, moving with the music on a Volumio player. 
 
 <p align="center"><img src="https://raw.githubusercontent.com/wiki/foonerd/lcd1602-vumeter/images/bars-blocks.svg" width="520" alt="The bars"></p>
 
-The workspace version is **0.1.0**.
+The workspace version is **0.1.1**.
 
 ## Get it
 
