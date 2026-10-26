@@ -49,7 +49,9 @@ pub fn to_db(level: f32) -> f32 {
     if level <= 0.0 {
         SILENCE_DB
     } else {
-        (20.0 * level.log10()).max(SILENCE_DB)
+        // Through ln, not log10: glibc 2.43 gives log10f a new symbol version,
+        // and a binary built on such a host would not load on Volumio's 2.36.
+        (20.0 * std::f32::consts::LOG10_E * level.ln()).max(SILENCE_DB)
     }
 }
 
