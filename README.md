@@ -13,7 +13,7 @@ Download the plugin zip from the [releases](https://github.com/foonerd/lcd1602-v
 | Player | Volumio 4 on a Raspberry Pi 3, 4, 5 or Zero 2 W (32- or 64-bit image), or a PC with a USB I2C adapter. |
 | --- | --- |
 | Display | Any 16x2 character module with an I2C controller or backpack; see [Displays](https://github.com/foonerd/lcd1602-vumeter/wiki/Displays). |
-| Wiring | Four wires: 3.3 V or 5 V, GND, SDA, SCL. |
+| Wiring | Four wires: 5 V (3.3 V for the Waveshare modules), GND, SDA, SCL. |
 
 ## What is in the box
 
